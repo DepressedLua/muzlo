@@ -4,86 +4,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Скачать музыку</title>
-    <style>
-        body {
-            font-family: -apple-system, sans-serif;
-            padding: 20px;
-            max-width: 500px;
-            margin: 0 auto;
-            background: #f2f2f7;
-        }
-        .download-box {
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            text-align: center;
-            border: 2px dashed #007aff;
-            margin-top: 50px;
-        }
-        h1 { font-size: 24px; margin-bottom: 10px; }
-        .sub { color: #666; margin-bottom: 25px; }
-        .btn {
-            display: inline-block;
-            background: #007aff;
-            color: white;
-            padding: 15px 40px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-size: 18px;
-            font-weight: 600;
-        }
-        .btn:active { background: #0055b3; }
-        .btn-green { background: #34c759; }
-        .btn-green:active { background: #28a745; }
-        .list {
-            margin-top: 20px;
-            text-align: left;
-        }
-        .item {
-            background: white;
-            padding: 12px 16px;
-            border-radius: 10px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid #e5e5ea;
-        }
-        .item a {
-            color: #007aff;
-            text-decoration: none;
-            font-weight: 500;
-        }
-    </style>
 </head>
-<body>
+<body style="font-family: -apple-system; padding: 20px; max-width: 400px; margin: 0 auto; background: #f2f2f7;">
 
-    <div class="download-box">
-        <h1>🎵 Скачать музыку</h1>
-        <p class="sub">Выберите способ скачивания</p>
+    <h1 style="text-align: center;">🎵 Моя музыка</h1>
+    
+    <div style="background: white; border-radius: 12px; padding: 20px; border: 1px solid #e5e5ea;">
         
-        <!-- Скачать ZIP архив -->
-        <a href="music.zip" download class="btn btn-green" style="display:block; margin-bottom:15px;">
-            📦 Скачать ВСЁ (ZIP архив)
-        </a>
-        
-        <p style="color:#666; font-size:14px;">или скачайте отдельные треки:</p>
-        
-        <div class="list">
-            <div class="item">
-                <span>Трек 1</span>
-                <a href="track1.mp3" download>Скачать</a>
-            </div>
-            <div class="item">
-                <span>Трек 2</span>
-                <a href="track2.mp3" download>Скачать</a>
-            </div>
-            <div class="item">
-                <span>Трек 3</span>
-                <a href="track3.mp3" download>Скачать</a>
-            </div>
+        <p style="text-align: center; color: #666;">
+            Нажмите на трек, чтобы добавить в Музыку
+        </p>
+
+        <div style="margin: 15px 0;">
+            <a href="#" onclick="downloadMusic('track1.mp3')" style="display: block; background: #007aff; color: white; padding: 14px; border-radius: 10px; text-align: center; text-decoration: none; margin-bottom: 10px; font-weight: 500;">
+                🎵 Трек 1 (5.2 MB)
+            </a>
+            <a href="#" onclick="downloadMusic('track2.mp3')" style="display: block; background: #007aff; color: white; padding: 14px; border-radius: 10px; text-align: center; text-decoration: none; margin-bottom: 10px; font-weight: 500;">
+                🎵 Трек 2 (4.8 MB)
+            </a>
+            <a href="#" onclick="downloadMusic('track3.mp3')" style="display: block; background: #007aff; color: white; padding: 14px; border-radius: 10px; text-align: center; text-decoration: none; font-weight: 500;">
+                🎵 Трек 3 (6.1 MB)
+            </a>
+        </div>
+
+        <div style="background: #e8f5e9; padding: 12px; border-radius: 8px; border: 1px solid #4caf50; font-size: 14px;">
+            <strong>✅ Как сохранить:</strong>
+            <ol style="margin-top: 8px; padding-left: 20px;">
+                <li>Нажмите на трек</li>
+                <li>Выберите "Открыть в iTunes"</li>
+                <li>Нажмите "Сохранить"</li>
+            </ol>
         </div>
     </div>
+
+    <script>
+        function downloadMusic(file) {
+            // Пробуем открыть через iTunes
+            const url = window.location.href.split('/').slice(0, -1).join('/') + '/' + file;
+            
+            // Создаем ссылку для скачивания
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = file;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Пробуем открыть в iTunes
+            setTimeout(() => {
+                window.location.href = 'itms://' + url.replace('https://', '').replace('http://', '');
+            }, 300);
+            
+            return false;
+        }
+    </script>
 
 </body>
 </html>
