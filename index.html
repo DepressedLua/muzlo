@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Музыкальный плеер</title>
+    <title>Музыка для iPhone 4s</title>
     <style>
         * {
             margin: 0;
@@ -14,7 +14,6 @@
         body {
             font-family: -apple-system, "Helvetica Neue", sans-serif;
             background: #f2f2f7;
-            color: #1c1c1e;
             padding: 16px;
             max-width: 500px;
             margin: 0 auto;
@@ -45,7 +44,6 @@
             padding: 20px;
             margin-bottom: 20px;
             border: 1px solid #e5e5ea;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
 
         .now-playing {
@@ -60,27 +58,62 @@
             margin-bottom: 4px;
         }
 
-        .now-playing .track-artist {
-            font-size: 15px;
-            color: #8e8e93;
-        }
-
         .now-playing .track-status {
-            font-size: 13px;
-            color: #34c759;
+            font-size: 14px;
+            color: #8e8e93;
             margin-top: 6px;
         }
 
-        audio {
-            width: 100%;
-            margin: 15px 0;
-            background: #f8f8fc;
-            border-radius: 8px;
+        .now-playing .track-status.playing {
+            color: #34c759;
         }
 
-        /* Для старых iOS - показываем controls */
-        audio::-webkit-media-controls-panel {
-            background: #f8f8fc;
+        .now-playing .track-status.error {
+            color: #ff3b30;
+        }
+
+        /* Кнопки управления */
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            justify-content: center;
+        }
+
+        .controls button {
+            background: #007aff;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            flex: 1;
+            max-width: 120px;
+        }
+
+        .controls button:active {
+            background: #0055b3;
+        }
+
+        .controls button.stop {
+            background: #ff3b30;
+        }
+
+        .controls button.stop:active {
+            background: #cc2a20;
+        }
+
+        .controls button.play-all {
+            background: #34c759;
+            flex: 2;
+            max-width: 200px;
+        }
+
+        .controls button.play-all:active {
+            background: #28a745;
         }
 
         /* Список треков */
@@ -94,12 +127,8 @@
             background: white;
             border-radius: 12px;
             padding: 14px 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
             border: 1px solid #e5e5ea;
             transition: background 0.1s;
-            cursor: pointer;
         }
 
         .track-item:active {
@@ -112,48 +141,50 @@
         }
 
         .track-info {
-            flex: 1;
-            min-width: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
         .track-name {
             font-size: 16px;
             font-weight: 500;
             color: #000;
+            flex: 1;
         }
 
         .track-size {
             font-size: 13px;
             color: #8e8e93;
-            margin-top: 2px;
         }
 
         .track-actions {
             display: flex;
             gap: 6px;
-            flex-shrink: 0;
-            margin-left: 12px;
+            margin-top: 8px;
+            flex-wrap: wrap;
         }
 
         .track-btn {
-            background: #007aff;
-            color: white;
+            padding: 8px 16px;
             border: none;
             border-radius: 20px;
-            padding: 8px 16px;
             font-size: 14px;
             font-weight: 500;
             cursor: pointer;
             -webkit-tap-highlight-color: transparent;
-            min-width: 44px;
-        }
-
-        .track-btn:active {
-            background: #0055b3;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            flex: 1;
+            min-width: 60px;
         }
 
         .track-btn.play {
             background: #34c759;
+            color: white;
         }
 
         .track-btn.play:active {
@@ -161,19 +192,34 @@
         }
 
         .track-btn.play.playing {
-            background: #ff3b30;
-        }
-
-        .track-btn.play.playing:active {
-            background: #cc2a20;
+            background: #ff9500;
         }
 
         .track-btn.download {
-            background: #8e8e93;
+            background: #007aff;
+            color: white;
         }
 
         .track-btn.download:active {
+            background: #0055b3;
+        }
+
+        .track-btn.open {
+            background: #8e8e93;
+            color: white;
+        }
+
+        .track-btn.open:active {
             background: #6e6e73;
+        }
+
+        .track-btn.itunes {
+            background: #ff2d55;
+            color: white;
+        }
+
+        .track-btn.itunes:active {
+            background: #cc2244;
         }
 
         .download-all {
@@ -186,7 +232,7 @@
             font-weight: 600;
             cursor: pointer;
             width: 100%;
-            margin-bottom: 20px;
+            margin: 20px 0;
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -195,20 +241,28 @@
         }
 
         .info-box {
-            background: #e8f5e9;
-            border: 1px solid #4caf50;
+            background: #e3f2fd;
+            border: 1px solid #2196f3;
             border-radius: 12px;
             padding: 15px;
             margin-top: 20px;
             font-size: 14px;
-            color: #2e7d32;
-            text-align: center;
+            color: #0d47a1;
         }
 
         .info-box strong {
             display: block;
-            font-size: 16px;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+
+        .info-box ul {
+            padding-left: 20px;
+            margin: 5px 0;
+        }
+
+        .info-box li {
+            margin-bottom: 4px;
         }
 
         .error-box {
@@ -216,15 +270,14 @@
             border: 1px solid #ef5350;
             border-radius: 12px;
             padding: 15px;
-            margin-top: 20px;
+            margin: 10px 0;
             font-size: 14px;
             color: #c62828;
             display: none;
         }
 
-        .error-box strong {
+        .error-box.show {
             display: block;
-            margin-bottom: 5px;
         }
 
         .footer {
@@ -247,19 +300,46 @@
             text-align: center;
         }
 
+        .method-selector {
+            display: flex;
+            gap: 8px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+
+        .method-selector button {
+            flex: 1;
+            padding: 8px 12px;
+            border: 2px solid #e5e5ea;
+            border-radius: 20px;
+            background: white;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            min-width: 60px;
+        }
+
+        .method-selector button.active {
+            border-color: #007aff;
+            background: #e3f2fd;
+            color: #007aff;
+        }
+
+        .method-selector button:active {
+            background: #e5e5ea;
+        }
+
         @media (max-width: 400px) {
-            .track-item {
-                flex-wrap: wrap;
-            }
             .track-actions {
-                width: 100%;
-                margin-left: 0;
-                margin-top: 8px;
-                justify-content: flex-end;
+                flex-direction: column;
             }
             .track-btn {
-                padding: 10px 20px;
-                font-size: 15px;
+                width: 100%;
+            }
+            .controls button {
+                font-size: 14px;
+                padding: 10px 16px;
             }
         }
     </style>
@@ -267,28 +347,38 @@
 <body>
 
     <h1>🎵 Музыкальный плеер</h1>
-    <div class="subtitle">Слушайте музыку прямо на iPhone 4s</div>
+    <div class="subtitle">Слушайте на iPhone 4s (iOS 6+)</div>
 
-    <!-- Совместимость -->
     <div class="compatibility">
-        📱 Для iPhone 4s (iOS 6+) • Поддерживает MP3, M4A, AAC
+        📱 Для iPhone 4s • Используйте Safari • Формат: MP3
     </div>
 
     <!-- Плеер -->
-    <div class="player-section" id="playerSection">
+    <div class="player-section">
         <div class="now-playing">
             <div class="track-title" id="currentTrack">Выберите трек</div>
-            <div class="track-artist" id="currentArtist">Нажмите на песню чтобы слушать</div>
-            <div class="track-status" id="playStatus">⏸ Остановлено</div>
+            <div class="track-status" id="playStatus">⏸ Готов к воспроизведению</div>
         </div>
-        
-        <audio id="audioPlayer" controls preload="metadata">
-            Ваш браузер не поддерживает аудио
-        </audio>
-        
-        <div style="display: flex; gap: 8px; margin-top: 10px;">
-            <button class="download-all" id="playAllBtn" style="flex:1; margin:0; padding: 10px;">▶ Слушать все</button>
-            <button class="download-all" id="stopBtn" style="flex:0.5; margin:0; padding: 10px; background:#ff3b30;">⏹</button>
+
+        <!-- Способ воспроизведения -->
+        <div style="text-align: center; font-size: 13px; color: #8e8e93; margin-bottom: 8px;">
+            Способ воспроизведения:
+        </div>
+        <div class="method-selector">
+            <button class="active" data-method="html5">HTML5</button>
+            <button data-method="iframe">Iframe</button>
+            <button data-method="window">Окно</button>
+            <button data-method="itunes">iTunes</button>
+        </div>
+
+        <div class="controls">
+            <button class="play-all" id="playAllBtn">▶ Слушать все</button>
+            <button class="stop" id="stopBtn">⏹ Стоп</button>
+        </div>
+
+        <div class="error-box" id="errorBox">
+            <strong>⚠️ Не удалось воспроизвести</strong>
+            <span id="errorText">Попробуйте другой способ воспроизведения</span>
         </div>
     </div>
 
@@ -302,15 +392,14 @@
 
     <!-- Информация -->
     <div class="info-box">
-        <strong>✅ Советы для iPhone 4s:</strong>
-        • Используйте Safari для лучшей совместимости<br>
-        • Файлы в MP3 формате (128-192 kbps)<br>
-        • Если трек не играет, попробуйте скачать его
-    </div>
-
-    <div class="error-box" id="errorBox">
-        <strong>⚠️ Ошибка воспроизведения</strong>
-        <span id="errorText">Попробуйте скачать трек или обновить страницу</span>
+        <strong>💡 Как слушать на iPhone 4s:</strong>
+        <ul>
+            <li><strong>HTML5</strong> — встроенный плеер (самый удобный)</li>
+            <li><strong>Iframe</strong> — открывает в отдельном фрейме</li>
+            <li><strong>Окно</strong> — открывает в новом окне</li>
+            <li><strong>iTunes</strong> — открывает в приложении Музыка</li>
+        </ul>
+        <p style="margin-top: 8px;">Если не работает, попробуйте другой способ!</p>
     </div>
 
     <div class="footer">
@@ -319,7 +408,7 @@
 
     <script>
         // ============================================
-        // 👇 СПИСОК ТРЕКОВ (ИЗМЕНИТЕ НА СВОИ)
+        // 👇 ВАШИ ТРЕКИ (ИЗМЕНИТЕ)
         // ============================================
         const tracks = [
             {
@@ -340,29 +429,41 @@
                 size: "6.1 MB",
                 artist: "Исполнитель 3"
             }
-            // Добавьте сколько нужно
         ];
 
         // ============================================
         // НАСТРОЙКИ
         // ============================================
-        const baseUrl = ""; // или "music/" если в папке
+        const baseUrl = ""; // или "music/"
         const siteUrl = window.location.href.split('/').slice(0, -1).join('/');
 
         // ============================================
         // КОД ПЛЕЕРА
         // ============================================
-        const audio = document.getElementById('audioPlayer');
-        const currentTrack = document.getElementById('currentTrack');
-        const currentArtist = document.getElementById('currentArtist');
+        let currentMethod = 'html5';
+        let currentPlayingIndex = -1;
+        let isPlaying = false;
+        let audioElement = null;
+
+        const currentTrackEl = document.getElementById('currentTrack');
         const playStatus = document.getElementById('playStatus');
         const trackList = document.getElementById('trackList');
         const errorBox = document.getElementById('errorBox');
         const errorText = document.getElementById('errorText');
-        let currentPlayingIndex = -1;
-        let isPlaying = false;
 
-        // Функция для воспроизведения трека
+        // Выбор метода воспроизведения
+        document.querySelectorAll('.method-selector button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.method-selector button').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentMethod = this.dataset.method;
+                hideError();
+                playStatus.textContent = `🔄 Метод: ${this.textContent}`;
+                playStatus.className = 'track-status';
+            });
+        });
+
+        // Функция воспроизведения
         function playTrack(index) {
             if (index < 0 || index >= tracks.length) return;
             
@@ -370,73 +471,151 @@
             const fileUrl = baseUrl + track.file;
             const fullUrl = siteUrl + '/' + fileUrl;
             
-            // Обновляем информацию
-            currentTrack.textContent = track.name;
-            currentArtist.textContent = track.artist || 'Исполнитель';
+            currentTrackEl.textContent = track.name;
             currentPlayingIndex = index;
-            
-            // Устанавливаем источник
-            audio.src = fullUrl;
-            audio.load();
-            
-            // Пытаемся воспроизвести
-            const playPromise = audio.play();
-            
-            if (playPromise !== undefined) {
-                playPromise.then(() => {
-                    // Успешно
-                    isPlaying = true;
-                    playStatus.textContent = '▶ Воспроизводится';
-                    playStatus.style.color = '#34c759';
-                    updatePlayButtons(index);
-                    hideError();
-                }).catch(error => {
-                    // Ошибка
-                    console.error('Ошибка воспроизведения:', error);
+            hideError();
+
+            // Останавливаем предыдущее воспроизведение
+            stopAllPlayback();
+
+            // Выбираем метод
+            switch(currentMethod) {
+                case 'html5':
+                    playHTML5(fullUrl, track);
+                    break;
+                case 'iframe':
+                    playIframe(fullUrl, track);
+                    break;
+                case 'window':
+                    playWindow(fullUrl, track);
+                    break;
+                case 'itunes':
+                    playItunes(fullUrl, track);
+                    break;
+                default:
+                    playHTML5(fullUrl, track);
+            }
+
+            updateTrackUI(index);
+        }
+
+        // Метод 1: HTML5 Audio
+        function playHTML5(url, track) {
+            try {
+                if (audioElement) {
+                    audioElement.pause();
+                    audioElement = null;
+                }
+
+                audioElement = new Audio(url);
+                audioElement.preload = 'metadata';
+                
+                const playPromise = audioElement.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        isPlaying = true;
+                        playStatus.textContent = `▶ Играет: ${track.name}`;
+                        playStatus.className = 'track-status playing';
+                        updatePlayButtons(currentPlayingIndex, true);
+                    }).catch(error => {
+                        console.error('HTML5 ошибка:', error);
+                        showError('HTML5 не работает. Попробуйте другой метод.');
+                        playStatus.textContent = '❌ Ошибка HTML5';
+                        playStatus.className = 'track-status error';
+                        // Пробуем следующий метод
+                        setTimeout(() => {
+                            if (currentMethod === 'html5') {
+                                currentMethod = 'iframe';
+                                document.querySelector('[data-method="iframe"]').click();
+                                playTrack(currentPlayingIndex);
+                            }
+                        }, 1000);
+                    });
+                }
+
+                // Обработчики
+                audioElement.addEventListener('ended', function() {
                     isPlaying = false;
-                    playStatus.textContent = '⛔ Ошибка воспроизведения';
-                    playStatus.style.color = '#ff3b30';
-                    showError('Не удалось воспроизвести трек. Попробуйте скачать его.');
+                    playStatus.textContent = '⏹ Трек завершен';
+                    playStatus.className = 'track-status';
+                    updatePlayButtons(currentPlayingIndex, false);
                 });
+
+                audioElement.addEventListener('error', function(e) {
+                    console.error('Audio error:', e);
+                    showError('Ошибка загрузки аудио. Проверьте формат файла.');
+                    playStatus.textContent = '❌ Ошибка загрузки';
+                    playStatus.className = 'track-status error';
+                });
+
+            } catch(e) {
+                console.error('HTML5 exception:', e);
+                showError('Ошибка HTML5 плеера');
             }
         }
 
-        // Обновление кнопок Play
-        function updatePlayButtons(activeIndex) {
-            document.querySelectorAll('.track-item').forEach((item, i) => {
-                const btn = item.querySelector('.play-btn');
-                if (i === activeIndex && isPlaying) {
-                    btn.textContent = '⏸';
-                    btn.classList.add('playing');
-                    item.classList.add('active');
-                } else {
-                    btn.textContent = '▶';
-                    btn.classList.remove('playing');
-                    item.classList.remove('active');
+        // Метод 2: Iframe
+        function playIframe(url, track) {
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.src = url;
+            document.body.appendChild(iframe);
+            
+            playStatus.textContent = `▶ Открыто в iframe: ${track.name}`;
+            playStatus.className = 'track-status playing';
+            isPlaying = true;
+            
+            setTimeout(() => {
+                if (iframe.parentNode) {
+                    iframe.parentNode.removeChild(iframe);
                 }
-            });
+            }, 30000);
         }
 
-        // Показать ошибку
-        function showError(message) {
-            errorBox.style.display = 'block';
-            errorText.textContent = message;
+        // Метод 3: Новое окно
+        function playWindow(url, track) {
+            const newWindow = window.open(url, '_blank');
+            if (newWindow) {
+                playStatus.textContent = `▶ Открыто в новом окне: ${track.name}`;
+                playStatus.className = 'track-status playing';
+                isPlaying = true;
+            } else {
+                showError('Не удалось открыть окно. Разрешите всплывающие окна.');
+                playStatus.textContent = '❌ Окно заблокировано';
+                playStatus.className = 'track-status error';
+            }
         }
 
-        // Скрыть ошибку
-        function hideError() {
-            errorBox.style.display = 'none';
+        // Метод 4: iTunes
+        function playItunes(url, track) {
+            // Пробуем открыть в iTunes
+            const itunesUrl = 'itms://' + url.replace('https://', '').replace('http://', '');
+            window.location.href = itunesUrl;
+            
+            playStatus.textContent = `▶ Открывается в iTunes: ${track.name}`;
+            playStatus.className = 'track-status playing';
+            isPlaying = true;
+            
+            // Если не открылось, пробуем скачать
+            setTimeout(() => {
+                if (!document.hidden) {
+                    showError('iTunes не открылся. Попробуйте скачать трек.');
+                    playStatus.textContent = '❌ iTunes не отвечает';
+                    playStatus.className = 'track-status error';
+                }
+            }, 3000);
         }
 
-        // Остановить воспроизведение
-        function stopPlayback() {
-            audio.pause();
-            audio.currentTime = 0;
+        // Остановка
+        function stopAllPlayback() {
+            if (audioElement) {
+                audioElement.pause();
+                audioElement = null;
+            }
             isPlaying = false;
             playStatus.textContent = '⏸ Остановлено';
-            playStatus.style.color = '#8e8e93';
-            currentTrack.textContent = 'Выберите трек';
-            currentArtist.textContent = 'Нажмите на песню чтобы слушать';
+            playStatus.className = 'track-status';
             document.querySelectorAll('.play-btn').forEach(btn => {
                 btn.textContent = '▶';
                 btn.classList.remove('playing');
@@ -444,7 +623,39 @@
             document.querySelectorAll('.track-item').forEach(item => {
                 item.classList.remove('active');
             });
-            currentPlayingIndex = -1;
+        }
+
+        // Обновление UI
+        function updateTrackUI(index) {
+            document.querySelectorAll('.track-item').forEach((item, i) => {
+                if (i === index) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        }
+
+        function updatePlayButtons(activeIndex, playing) {
+            document.querySelectorAll('.play-btn').forEach((btn, i) => {
+                if (i === activeIndex && playing) {
+                    btn.textContent = '⏸';
+                    btn.classList.add('playing');
+                } else {
+                    btn.textContent = '▶';
+                    btn.classList.remove('playing');
+                }
+            });
+        }
+
+        // Ошибки
+        function showError(message) {
+            errorBox.classList.add('show');
+            errorText.textContent = message;
+        }
+
+        function hideError() {
+            errorBox.classList.remove('show');
         }
 
         // ============================================
@@ -458,131 +669,78 @@
             div.className = 'track-item';
             div.innerHTML = `
                 <div class="track-info">
-                    <div class="track-name">${track.name}</div>
-                    <div class="track-size">${track.size}</div>
+                    <span class="track-name">${track.name}</span>
+                    <span class="track-size">${track.size}</span>
                 </div>
                 <div class="track-actions">
                     <button class="track-btn play play-btn" data-index="${index}">▶</button>
-                    <a href="${fullUrl}" download class="track-btn download" style="text-decoration:none; color:white;">📥</a>
+                    <a href="${fullUrl}" download class="track-btn download">📥 Скачать</a>
+                    <a href="${fullUrl}" target="_blank" class="track-btn open">📂 Открыть</a>
+                    <button class="track-btn itunes" data-url="${fullUrl}" data-name="${track.name}">🎵 iTunes</button>
                 </div>
             `;
             trackList.appendChild(div);
 
-            // Обработчик для кнопки Play
+            // Кнопка Play
             const playBtn = div.querySelector('.play-btn');
             playBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
                 const idx = parseInt(this.dataset.index);
-                
                 if (currentPlayingIndex === idx && isPlaying) {
-                    // Пауза
-                    audio.pause();
-                    isPlaying = false;
-                    playStatus.textContent = '⏸ Пауза';
-                    playStatus.style.color = '#8e8e93';
-                    this.textContent = '▶';
-                    this.classList.remove('playing');
-                    div.classList.remove('active');
+                    stopAllPlayback();
                 } else {
-                    // Играем
                     playTrack(idx);
                 }
             });
 
-            // Обработчик для клика по треку
+            // Кнопка iTunes
+            const itunesBtn = div.querySelector('.itunes');
+            itunesBtn.addEventListener('click', function() {
+                const url = this.dataset.url;
+                const name = this.dataset.name;
+                const itunesUrl = 'itms://' + url.replace('https://', '').replace('http://', '');
+                window.location.href = itunesUrl;
+                playStatus.textContent = `🎵 Открывается в iTunes: ${name}`;
+                playStatus.className = 'track-status playing';
+            });
+
+            // Клик по треку
             div.addEventListener('click', function() {
                 const idx = parseInt(this.querySelector('.play-btn').dataset.index);
                 if (currentPlayingIndex === idx && isPlaying) {
-                    audio.pause();
-                    isPlaying = false;
-                    playStatus.textContent = '⏸ Пауза';
-                    playStatus.style.color = '#8e8e93';
-                    this.querySelector('.play-btn').textContent = '▶';
-                    this.querySelector('.play-btn').classList.remove('playing');
-                    div.classList.remove('active');
+                    stopAllPlayback();
                 } else {
                     playTrack(idx);
                 }
             });
-        });
-
-        // ============================================
-        // ОБРАБОТЧИКИ СОБЫТИЙ ПЛЕЕРА
-        // ============================================
-        
-        // Когда трек загрузился
-        audio.addEventListener('loadedmetadata', function() {
-            console.log('Трек загружен, длительность:', this.duration);
-        });
-
-        // Когда трек начинает играть
-        audio.addEventListener('play', function() {
-            isPlaying = true;
-            playStatus.textContent = '▶ Воспроизводится';
-            playStatus.style.color = '#34c759';
-        });
-
-        // Когда трек на паузе
-        audio.addEventListener('pause', function() {
-            if (this.currentTime > 0) {
-                playStatus.textContent = '⏸ Пауза';
-                playStatus.style.color = '#8e8e93';
-            }
-        });
-
-        // Когда трек закончился
-        audio.addEventListener('ended', function() {
-            isPlaying = false;
-            playStatus.textContent = '⏹ Трек завершен';
-            playStatus.style.color = '#8e8e93';
-            document.querySelectorAll('.play-btn').forEach(btn => {
-                btn.textContent = '▶';
-                btn.classList.remove('playing');
-            });
-            document.querySelectorAll('.track-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            currentPlayingIndex = -1;
-        });
-
-        // Ошибка воспроизведения
-        audio.addEventListener('error', function(e) {
-            console.error('Ошибка аудио:', e);
-            showError('Ошибка загрузки аудио. Проверьте формат файла.');
-            isPlaying = false;
-            playStatus.textContent = '⛔ Ошибка';
-            playStatus.style.color = '#ff3b30';
         });
 
         // ============================================
         // КНОПКИ УПРАВЛЕНИЯ
         // ============================================
         
-        // Кнопка "Слушать все"
         document.getElementById('playAllBtn').addEventListener('click', function() {
             if (tracks.length === 0) return;
-            
-            // Воспроизводим первый трек
             playTrack(0);
             
-            // Когда трек заканчивается, играем следующий
-            audio.addEventListener('ended', function onEnd() {
-                const nextIndex = currentPlayingIndex + 1;
-                if (nextIndex < tracks.length) {
-                    playTrack(nextIndex);
-                } else {
-                    // Все треки проиграны
-                    playStatus.textContent = '⏹ Все треки проиграны';
-                    playStatus.style.color = '#8e8e93';
-                    audio.removeEventListener('ended', onEnd);
-                }
-            });
+            // Автоматическое переключение
+            if (audioElement) {
+                audioElement.addEventListener('ended', function onEnd() {
+                    const nextIndex = currentPlayingIndex + 1;
+                    if (nextIndex < tracks.length) {
+                        playTrack(nextIndex);
+                    } else {
+                        playStatus.textContent = '⏹ Все треки проиграны';
+                        playStatus.className = 'track-status';
+                        audioElement.removeEventListener('ended', onEnd);
+                    }
+                });
+            }
         });
 
-        // Кнопка "Стоп"
-        document.getElementById('stopBtn').addEventListener('click', stopPlayback);
+        document.getElementById('stopBtn').addEventListener('click', stopAllPlayback);
 
-        // Кнопка "Скачать всё"
+        // Кнопка скачать всё
         document.getElementById('downloadAllBtn').addEventListener('click', function() {
             tracks.forEach((track, index) => {
                 const fileUrl = baseUrl + track.file;
@@ -597,31 +755,16 @@
                 }, index * 500);
             });
             playStatus.textContent = '📥 Начинается загрузка...';
-            playStatus.style.color = '#007aff';
+            playStatus.className = 'track-status';
         });
 
         // ============================================
-        // ПРОВЕРКА СОВМЕСТИМОСТИ
+        // АВТОПРОВЕРКА
         // ============================================
-        function checkCompatibility() {
-            const audio = document.createElement('audio');
-            const canPlayMp3 = audio.canPlayType('audio/mpeg');
-            const canPlayAac = audio.canPlayType('audio/aac');
-            
-            console.log('MP3 поддержка:', canPlayMp3);
-            console.log('AAC поддержка:', canPlayAac);
-            
-            if (!canPlayMp3 && !canPlayAac) {
-                showError('Ваш браузер не поддерживает аудио. Используйте Safari.');
-            }
-        }
-
-        // Запускаем проверку
-        setTimeout(checkCompatibility, 1000);
-
         console.log('✅ Плеер загружен!');
         console.log(`🎵 Треков: ${tracks.length}`);
         console.log('📱 Для iPhone 4s используйте Safari');
+        console.log('💡 Попробуйте разные методы воспроизведения');
     </script>
 
 </body>
