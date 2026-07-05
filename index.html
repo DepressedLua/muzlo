@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Моя музыка</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, "Helvetica Neue", sans-serif;
+            background: #f2f2f7;
+            color: #1c1c1e;
+            padding: 16px;
+            padding-bottom: 40px;
+            max-width: 600px;
+            margin: 0 auto;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin: 20px 0 8px 0;
+            color: #000;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            color: #3a3a3c;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e5e5ea;
+            padding-bottom: 12px;
+        }
+
+        .file-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .file-item {
+            background: white;
+            border-radius: 12px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #e5e5ea;
+            transition: background 0.1s;
+        }
+
+        .file-item:active {
+            background: #e5e5ea;
+        }
+
+        .file-info {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .file-name {
+            font-size: 16px;
+            font-weight: 500;
+            color: #000;
+            word-break: break-word;
+        }
+
+        .file-size {
+            font-size: 13px;
+            color: #8e8e93;
+            margin-top: 2px;
+        }
+
+        .download-btn {
+            background: #007aff;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 18px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            flex-shrink: 0;
+            margin-left: 12px;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .download-btn:active {
+            background: #0055b3;
+        }
+
+        .download-btn.playing {
+            background: #34c759;
+        }
+
+        .player-section {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 20px;
+            border: 1px solid #e5e5ea;
+        }
+
+        .player-section h3 {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 10px;
+            color: #000;
+        }
+
+        audio {
+            width: 100%;
+            max-width: 100%;
+            margin: 6px 0;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px 20px;
+            color: #8e8e93;
+        }
+
+        .empty-state span {
+            font-size: 40px;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .download-all {
+            background: #34c759;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 16px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .download-all:active {
+            background: #28a745;
+        }
+
+        .status {
+            font-size: 13px;
+            color: #8e8e93;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🎵 Моя музыка</h1>
+    <div class="subtitle">Нажмите на трек для прослушивания или скачивания</div>
+
+    <!-- Кнопка скачать всё -->
+    <button class="download-all" id="downloadAllBtn">📥 Скачать все треки (ZIP)</button>
+
+    <!-- Список треков -->
+    <div class="file-list" id="fileList">
+        <!-- Треки будут добавлены сюда через JavaScript -->
+    </div>
+
+    <!-- Плеер -->
+    <div class="player-section">
+        <h3>▶ Слушать</h3>
+        <audio id="audioPlayer" controls></audio>
+        <div class="status" id="playerStatus">Выберите трек для прослушивания</div>
+    </div>
+
+    <script>
+        // ============================================
+        // 👇 ЗДЕСЬ ВЫ ДОБАВЛЯЕТЕ СВОИ ТРЕКИ
+        // ============================================
+        const tracks = [
+            {
+                name: "Трек 1 - Название песни",
+                file: "track1.mp3",
+                size: "5.2 MB"
+            },
+            {
+                name: "Трек 2 - Название песни",
+                file: "track2.mp3",
+                size: "4.8 MB"
+            },
+            {
+                name: "Трек 3 - Название песни",
+                file: "track3.mp3",
+                size: "6.1 MB"
+            }
+            // Добавьте столько треков, сколько нужно
+        ];
+
+        // ============================================
+        // БАЗОВЫЙ URL ДЛЯ ФАЙЛОВ
+        // ============================================
+        // Если файлы лежат в той же папке, что и HTML:
+        const baseUrl = "";
+        
+        // Если файлы в отдельной папке "music":
+        // const baseUrl = "music/";
+        
+        // Если файлы на GitHub в другом репозитории:
+        // const baseUrl = "https://raw.githubusercontent.com/ваш-username/ваш-репозиторий/main/music/";
+
+        // ============================================
+        // КОД ДЛЯ ОТОБРАЖЕНИЯ ТРЕКОВ
+        // ============================================
+        const fileList = document.getElementById('fileList');
+        const audioPlayer = document.getElementById('audioPlayer');
+        const playerStatus = document.getElementById('playerStatus');
+        const downloadAllBtn = document.getElementById('downloadAllBtn');
+
+        // Функция для создания HTML элемента трека
+        function createTrackElement(track, index) {
+            const div = document.createElement('div');
+            div.className = 'file-item';
+            
+            const fileUrl = baseUrl + track.file;
+            
+            div.innerHTML = `
+                <div class="file-info">
+                    <div class="file-name">${track.name}</div>
+                    <div class="file-size">${track.size}</div>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <a href="${fileUrl}" download class="download-btn" id="downloadBtn_${index}">📥</a>
+                    <button class="download-btn play-btn" data-index="${index}" id="playBtn_${index}">▶</button>
+                </div>
+            `;
+            
+            return div;
+        }
+
+        // Отображаем все треки
+        tracks.forEach((track, index) => {
+            const element = createTrackElement(track, index);
+            fileList.appendChild(element);
+            
+            // Добавляем обработчик для кнопки "Play"
+            const playBtn = document.getElementById(`playBtn_${index}`);
+            playBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const fileUrl = baseUrl + track.file;
+                audioPlayer.src = fileUrl;
+                audioPlayer.play();
+                playerStatus.textContent = `Сейчас играет: ${track.name}`;
+                
+                // Меняем внешний вид кнопки
+                document.querySelectorAll('.play-btn').forEach(btn => {
+                    btn.textContent = '▶';
+                    btn.classList.remove('playing');
+                });
+                this.textContent = '⏸';
+                this.classList.add('playing');
+            });
+        });
+
+        // Обработчик для кнопки "Скачать всё"
+        downloadAllBtn.addEventListener('click', function() {
+            // Создаем ссылки для скачивания каждого файла
+            tracks.forEach((track) => {
+                const fileUrl = baseUrl + track.file;
+                const link = document.createElement('a');
+                link.href = fileUrl;
+                link.download = track.file;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                // Небольшая задержка между скачиваниями
+                setTimeout(() => {}, 300);
+            });
+            
+            playerStatus.textContent = 'Начинается загрузка всех треков...';
+        });
+
+        // Обработчик окончания трека
+        audioPlayer.addEventListener('ended', function() {
+            document.querySelectorAll('.play-btn').forEach(btn => {
+                btn.textContent = '▶';
+                btn.classList.remove('playing');
+            });
+            playerStatus.textContent = 'Трек завершен';
+        });
+
+        // Информация при загрузке страницы
+        if (tracks.length === 0) {
+            fileList.innerHTML = `
+                <div class="empty-state">
+                    <span>🎵</span>
+                    <p>Нет добавленных треков</p>
+                    <p style="font-size:13px; margin-top:4px;">Добавьте треки в массив tracks в коде</p>
+                </div>
+            `;
+        }
+
+        console.log(`✅ Загружено ${tracks.length} треков`);
+        console.log('📁 Базовый URL:', baseUrl || '(текущая папка)');
+    </script>
+
+</body>
+</html>
